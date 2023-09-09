@@ -4,9 +4,14 @@
 // Reddit: u/taardenn
 
 let drawing = [];
-let snap = false;
 let snapDist = 25;
 let activePoint;
+
+let snap = false;
+let imagePriview = true;
+// TODO
+// let orthoX = false;
+// let orthoY = false;
 
 let input;
 let img;
@@ -15,7 +20,7 @@ function setup() {
   createCanvas(400, 400);
   colorMode(HSB, 360, 100, 100, 100);
   strokeWeight(2);
-  noFill()
+  noFill();
 
   // Init
   input = createFileInput(handleFile);
@@ -24,28 +29,26 @@ function setup() {
 }
 
 function draw() {
-  if (img) {
+  if (img && imagePriview) {
     image(img, 0, 0, width, height);
   }
+
   background(32, 5, 95, 50);
+
   activePoint = snap ? nearestPoint(snapDist) : new P(mouseX, mouseY);
   drawLines();
 }
 
 function handleFile(file) {
   if (file.type === "image") {
-    print(file);
     img = createImg(file.data, "");
     img.hide();
-    if (drawing[drawing.length - 1].length == 0) {
-      drawing.pop();
-    }
   } else {
     img = null;
-    if (drawing[drawing.length - 1].length == 0) {
-      drawing.pop();
-    }
   }
+  // Fixing the out of boundry clicking
+  drawing.pop();
+  drawing.push([]);
 }
 
 function drawLines() {
@@ -78,7 +81,7 @@ function nearestPoint(_maxDist) {
     dist(a.x, a.y, mouseX, mouseY) < dist(b.x, b.y, mouseX, mouseY) ? a : b
   );
 
-  // Don't snap on last point
+  // preventing from snapping on the last point
   if (
     drawing[drawing.length - 1].length != 0 &&
     np.x ==
@@ -110,20 +113,32 @@ function keyReleased() {
     return;
   }
 
-  // Deactive snap mode by releasing "S"
+  // Deactivete snap mode by releasing "S"
   if (keyCode == 83) {
     snap = false;
   }
 
-  // Press "U" to undo
+  // Press "U" to undo.
   if (keyCode == 85) {
+    if (drawing.length == 1 && drawing[0].length == 0) return;
     if (drawing[drawing.length - 1].length == 0) {
       drawing.pop();
     }
     drawing[drawing.length - 1].pop();
   }
 
-  // Press "E" to export shapes
+  // Show/Hide overlayed img.
+  if (keyCode == 73) {
+    imagePriview = !imagePriview;
+  }
+
+  // Press "C" to close the current shape.
+  if (keyCode == 67) {
+    drawing[drawing.length - 1].push(drawing[drawing.length - 1][0]);
+    drawing.push([]);
+  }
+
+  // Press "E" to export shapes.
   if (keyCode === 69) {
     if (drawing[drawing.length - 1].length == 0) {
       drawing.pop();
@@ -138,9 +153,18 @@ function keyReleased() {
   }
 }
 
-function keyPressed() {
-  // Hold "S" to activate Snap mode
+function keyPressed() {  
+  // Hold "S" to activate Snap mode.
   if (keyCode == 83) snap = true;
+
+  //TODO
+  // Press "X" to activate Orthographic-x.
+  // if (keyCode == 88) {
+  // }
+
+  // Press "Z" to activate Orthographic-y.
+  // if (keyCode == 90) {
+  // }
 }
 
 // Using simple (x,y) obj insetad of createVector for better performance.
