@@ -41,7 +41,7 @@ function draw() {
     showGrid();
   }
 
-  // if (snapMode) getCursur();
+  if (snapMode) getCursur();
 
   runCommand();
   showDrawing();
@@ -93,22 +93,18 @@ function mouseReleased() {
   }
 }
 
-function initCommand(_command) {
-  activeCommand = commands[_command];
-  acStageManger = (() => {
-    let stages = [];
-    let stagesTodo = activeCommand.stages - activeCommand.points.length;
-    for (let i = 0; i < stagesTodo; i++) {
-      stages.push(false);
-    }
-    return stages;
-  })();
-}
-
 function keyPressed() {
-  if (keyCode === 88 && activePoint.hasOwnProperty("ortho") && !orthoX)
+  if (
+    keyCode === 88 &&
+    activeCommand.modifiers.hasOwnProperty("ortho") &&
+    !orthoX
+  )
     orthoX = mouseY;
-  if (keyCode === 90 && activePoint.hasOwnProperty("ortho") && !orthoY)
+  if (
+    keyCode === 90 &&
+    activeCommand.modifiers.hasOwnProperty("ortho") &&
+    !orthoY
+  )
     orthoY = mouseX;
 }
 
@@ -124,20 +120,22 @@ function keyReleased() {
     deactiveCommands();
   }
 
-  // C for Line
+  // C for circle
   if (keyCode == 67) initCommand("circle");
 
-  // L for Line
+  // L for line
   if (keyCode == 76) initCommand("line");
 
-  // P for Polyline
+  // P for polyline
   if (keyCode == 80) initCommand("polyline");
 
-  // R for 2Point Rectangle
+  // R for 2Point rectangle
   if (keyCode == 82) initCommand("rect2p");
 
-  // OrhoMode
+  // X 
   if (keyCode === 88) orthoX = null;
+
+  // Z
   if (keyCode === 90) orthoY = null;
 
   // G for activate/deactivate GridMode
@@ -187,6 +185,18 @@ function keyReleased() {
 
 function runCommand() {
   if (activeCommand) activeCommand.draw();
+}
+
+function initCommand(_command) {
+  activeCommand = commands[_command];
+  acStageManger = (() => {
+    let stages = [];
+    let stagesTodo = activeCommand.stages - activeCommand.points.length;
+    for (let i = 0; i < stagesTodo; i++) {
+      stages.push(false);
+    }
+    return stages;
+  })();
 }
 
 function deactiveCommands() {
