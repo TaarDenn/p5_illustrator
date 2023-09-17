@@ -1,6 +1,11 @@
+/**
+ * @module layers
+ * @returns 
+ */
 const layers = () => {
   return {};
 };
+
 layers.lines = [];
 layers.polylines = [];
 layers.rects2p = [];
