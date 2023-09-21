@@ -1,6 +1,6 @@
 /**
  * @module layers
- * @returns 
+ * @returns layers.line, layers,polylines, layers.rects2p, layers.circles, layers.splines,
  */
 const layers = () => {
   return {};
@@ -9,5 +9,6 @@ const layers = () => {
 layers.lines = [];
 layers.polylines = [];
 layers.rects2p = [];
-layers.shapes = [];
 layers.circles = [];
+layers.splines = [];
+layers.beziers2p = [];

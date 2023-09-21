@@ -1,13 +1,13 @@
 /**
  * @module commands
- * @returns line, circle, rect2p, polyline
+ * @returns line, circle, rect2p, polyline, spline, bazier
  */
 const commands = () => {
   return {};
 };
 
 /**
- * 
+ * Draw continues line.
  */
 commands.line = {
   name: "line",
@@ -15,16 +15,16 @@ commands.line = {
   stages: 2,
   continuable: true,
   points: [],
+  draw: IO.line.draw,
+  addPoints: IO.line.addPoints,
+  getPoints: IO.line.getPoints,
   modifiers: {
     ortho: true,
   },
-  draw: lineIO.draw,
-  addPoints: lineIO.addPoints,
-  getPoints: lineIO.getPoints,
 };
 
 /**
- * 
+ * Draw continues joined line.
  */
 commands.polyline = {
   name: "polyline",
@@ -32,17 +32,16 @@ commands.polyline = {
   stages: 0,
   continuable: false,
   points: [],
+  draw: IO.polyline.draw,
+  addPoints: IO.polyline.addPoints,
+  getPoints: IO.polyline.getPoints,
   modifiers: {
     ortho: true,
-    q: true,
   },
-  draw: polylineIO.draw,
-  addPoints: polylineIO.addPoints,
-  getPoints: polylineIO.getPoints,
 };
 
 /**
- * 
+ * Draw a rectangle by choosing 2 opposite corners.
  */
 commands.rect2p = {
   name: "rect2p",
@@ -50,16 +49,14 @@ commands.rect2p = {
   stages: 2,
   continuable: false,
   points: [],
-  modifiers: {
-    shift: null,
-  },
-  draw: rectIO.draw,
-  addPoints: rectIO.addPoints,
-  getPoints: rectIO.getPoints,
+  draw: IO.rect2p.draw,
+  addPoints: IO.rect2p.addPoints,
+  getPoints: IO.rect2p.getPoints,
+  modifiers: {},
 };
 
 /**
- * 
+ * Draw a circle by choosing center point and radius.
  */
 commands.circle = {
   name: "circle",
@@ -67,10 +64,38 @@ commands.circle = {
   stages: 2,
   continuable: false,
   points: [],
-  modifiers: {
-    shift: null,
-  },
-  draw: circleIO.draw,
-  addPoints: circleIO.addPoints,
-  getPoints: circleIO.getPoints,
+  draw: IO.circle.draw,
+  addPoints: IO.circle.addPoints,
+  getPoints: IO.circle.getPoints,
+  modifiers: {},
+};
+
+/**
+ * Draw a spline through points
+ */
+commands.spline = {
+  name: "spline",
+  layer: layers.splines,
+  stages: 0,
+  continuable: false,
+  points: [],
+  draw: IO.spline.draw,
+  addPoints: IO.spline.addPoints,
+  getPoints: IO.spline.getPoints,
+  modifiers: {},
+};
+
+/**
+ * Draw a spline through points
+ */
+commands.bezier2p = {
+  name: "bezier2p",
+  layer: layers.beziers2p,
+  stages: 0,
+  continuable: false,
+  points: [],
+  draw: IO.bezier2p.draw,
+  addPoints: IO.bezier2p.addPoints,
+  getPoints: IO.bezier2p.getPoints,
+  modifiers: {},
 };

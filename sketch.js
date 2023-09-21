@@ -47,144 +47,32 @@ function draw() {
   showDrawing();
 }
 
-function handleFile(file) {
-  if (file.type === "image") {
-    img = createImg(file.data, "");
-    img.hide();
-  } else {
-    img = null;
-  }
-}
-
-function showDrawing() {
-  layers.circles.forEach((c) => circle(c.x, c.y, c.d));
-  layers.rects2p.forEach((r) => rect(r.x, r.y, r.w, r.h));
-  layers.lines.forEach((l) => line(l[0].x, l[0].y, l[1].x, l[1].y));
-  layers.polylines.forEach((p) => {
-    for (let i = 0; i < p.length - 1; i++) {
-      line(p[i].x, p[i].y, p[i + 1].x, p[i + 1].y);
-    }
-  });
-}
-
 function mouseReleased() {
-  if (activeCommand) {
-    for (let i = 0; i < acStageManger.length; i++) {
-      if (acStageManger[i] == false) {
-        acStageManger[i] = true;
-        activeCommand.addPoints(getCursur());
-        if (i === acStageManger.length - 1) {
-          activeCommand.layer.push(activeCommand.getPoints());
-          acStageManger = [];
-          if (activeCommand.continuable) {
-            activeCommand.points = [
-              activeCommand.layer[activeCommand.layer.length - 1][1],
-            ];
-            initCommand(activeCommand.name);
-          } else {
-            activeCommand.points = [];
-            activeCommand = null;
-          }
+  for (let i = 0; i < acStageManger.length; i++) {
+    if (acStageManger[i] == false) {
+      acStageManger[i] = true;
+      activeCommand.addPoints(getCursur());
+      if (i === acStageManger.length - 1) {
+        activeCommand.layer.push(activeCommand.getPoints());
+        acStageManger = [];
+        if (activeCommand.continuable) {
+          activeCommand.points = [
+            activeCommand.layer[activeCommand.layer.length - 1][1],
+          ];
+          initCommand(activeCommand.name);
+        } else {
+          activeCommand.points = [];
+          activeCommand = null;
         }
-        return;
       }
+      return;
     }
-    activeCommand.addPoints(getCursur());
   }
-}
-
-function keyPressed() {
-  if (
-    keyCode === 88 &&
-    activeCommand.modifiers.hasOwnProperty("ortho") &&
-    !orthoX
-  )
-    orthoX = mouseY;
-  if (
-    keyCode === 90 &&
-    activeCommand.modifiers.hasOwnProperty("ortho") &&
-    !orthoY
-  )
-    orthoY = mouseX;
-}
-
-function keyReleased() {
-  if (
-    keyCode != 83 &&
-    keyCode != 73 &&
-    keyCode != 68 &&
-    keyCode != 71 &&
-    keyCode != 88 &&
-    keyCode != 90
-  ) {
-    deactiveCommands();
-  }
-
-  // C for circle
-  if (keyCode == 67) initCommand("circle");
-
-  // L for line
-  if (keyCode == 76) initCommand("line");
-
-  // P for polyline
-  if (keyCode == 80) initCommand("polyline");
-
-  // R for 2Point rectangle
-  if (keyCode == 82) initCommand("rect2p");
-
-  // X 
-  if (keyCode === 88) orthoX = null;
-
-  // Z
-  if (keyCode === 90) orthoY = null;
-
-  // G for activate/deactivate GridMode
-  if (keyCode == 71) {
-    gridMode = !gridMode;
-    if (gridMode) snapMode = false;
-  }
-
-  // S for activate/deactivate SnapMode
-  if (keyCode == 83) {
-    snapMode = !snapMode;
-    if (snapMode) gridMode = false;
-  }
-
-  // Press "U" to undo.
-  if (keyCode == 85) {
-    if (drawing.length == 1 && drawing[0].length == 0) return;
-    if (drawing[drawing.length - 1].length == 0) {
-      drawing.pop();
-    }
-    drawing[drawing.length - 1].pop();
-  }
-
-  // Show/Hide overlayed img.
-  if (keyCode == 73) imagePriview = !imagePriview;
-
-  // Press "D" to close the current shape.
-  if (keyCode == 68) {
-    drawing[drawing.length - 1].push(drawing[drawing.length - 1][0]);
-    drawing.push([]);
-  }
-
-  // Press "E" to export shapes.
-  if (keyCode === 69) {
-    if (drawing[drawing.length - 1].length == 0) {
-      drawing.pop();
-    }
-
-    let str = { shape: drawing };
-    const name = "drawing-" + new Date();
-    const writer = createWriter(`${name}.json`);
-    writer.print(JSON.stringify(str));
-    writer.close();
-    writer.clear();
-  }
+  activeCommand?.addPoints(getCursur());
 }
 
 function runCommand() {
-  if (activeCommand) activeCommand.draw();
+  activeCommand?.draw();
 }
 
 function initCommand(_command) {
@@ -200,28 +88,27 @@ function initCommand(_command) {
 }
 
 function deactiveCommands() {
-  if (activeCommand) {
-    if (activeCommand.stages === 0) {
-      activeCommand.layer.push(activeCommand.points);
-    }
-    activeCommand.points = [];
-    acStageManger = [];
-    activeCommand = null;
+  if (!activeCommand) return;
+  if (activeCommand.stages === 0 && activeCommand.points.length > 0) {
+    activeCommand.layer.push(activeCommand.getPoints());
   }
+  activeCommand.points = [];
+  acStageManger = [];
+  activeCommand = null;
 }
 
 function getCursur() {
-  if (activeCommand) {
-    if (gridMode) return gridPoint();
-    if (snapMode) return nearestPoint();
-    return { x: mouseX, y: mouseY };
-  }
+  if (!activeCommand) return;
+  let p;
+  if (gridMode) p = gridPoint();
+  if (snapMode) p = nearestPoint();
+  return { x: orthoY || p?.x || mouseX, y: orthoX || p?.y || mouseY };
 }
 
 function gridPoint() {
   let x = Math.floor(mouseX / gridSize + 0.5) * gridSize;
   let y = Math.floor(mouseY / gridSize + 0.5) * gridSize;
-  showSnappedPoint({ x, y });
+  showHelpers({ x, y });
   return { x, y };
 }
 
@@ -233,10 +120,11 @@ function nearestPoint() {
   if (nps.length == 0) return { x: mouseX, y: mouseY };
 
   const np = nps.reduce((a, b) =>
-    dist(a.x, a.y, mouseX, mouseY) < dist(b.x, b.y, mouseX, mouseY) ? a : b
+    fastDist(a.x, a.y, mouseX, mouseY) < fastDist(b.x, b.y, mouseX, mouseY)
+      ? a
+      : b
   );
-
-  // preventing from snapping on the last point
+  // Preventing from snapping on the last point
   if (
     activeCommand.points.length != 0 &&
     np.x == activeCommand.points[activeCommand.points.length - 1].x &&
@@ -244,17 +132,55 @@ function nearestPoint() {
   )
     return { x: mouseX, y: mouseY };
 
-  showSnappedPoint(np);
+  showHelpers(np);
   return np;
 }
 
+function handleFile(file) {
+  if (file.type === "image") {
+    img = createImg(file.data, "");
+    img.hide();
+  } else {
+    img = null;
+  }
+}
+
+function showDrawing() {
+  layers.circles.forEach((c) => IO.circle.show(c));
+  layers.rects2p.forEach((r) => IO.rect2p.show(r));
+  layers.lines.forEach((l) => IO.line.show(l));
+  layers.polylines.forEach((p) => {
+    IO.polyline.show(p);
+  });
+  layers.splines.forEach((s) => IO.spline.show(s));
+  layers.beziers2p.forEach((b) => IO.bezier2p.show(b));
+}
+
 // AID
-function showSnappedPoint(sp) {
+function showHelpers(sp) {
   push();
-  stroke([0, 100, 100]);
+  stroke(0, 100, 100);
   strokeWeight(1);
   circle(sp.x, sp.y, 8);
+
+  if (orthoX) {
+    stroke(0, 0, 70, 30);
+    line(sp.x, sp.y, sp.x, orthoX);
+  }
+
+  if (orthoY) {
+    stroke(0, 0, 70, 30);
+    line(sp.x, sp.y, orthoY, sp.y);
+  }
+
   pop();
+}
+
+// Faster in comparison
+function fastDist(x1, y1, x2, y2) {
+  let dx = x2 - x1;
+  let dy = y2 - y1;
+  return dx * dx + dy * dy;
 }
 
 function showGrid() {
