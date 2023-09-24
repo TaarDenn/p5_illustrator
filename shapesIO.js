@@ -26,8 +26,8 @@ IO.line = (() => {
     return this.points;
   }
 
-  function show(line) {
-    line(line[0].x, line[0].y, line[1].x, line[1].y);
+  function show(l) {
+    line(l[0].x, l[0].y, l[1].x, l[1].y);
   }
 
   return { draw, addPoints, getPoints, show };
@@ -70,8 +70,8 @@ IO.circle = (() => {
         ),
     };
   }
-  function show(circle) {
-    circle(circle.x, circle.y, circle.d);
+  function show(c) {
+    circle(c.x, c.y, c.d);
   }
   return { draw, addPoints, getPoints, show };
 })();
@@ -122,7 +122,7 @@ IO.rect2p = (() => {
 /**
  *
  */
-IO.polyline = (() => {
+IO.pline = (() => {
   function draw() {
     if (this.points.length == 0) return;
     for (let i = 0; i < this.points.length - 1; i++) {
@@ -137,8 +137,8 @@ IO.polyline = (() => {
 
     let ep = getCursur();
     line(
-      this.points[commands.polyline.points.length - 1].x,
-      this.points[commands.polyline.points.length - 1].y,
+      this.points[commands.pline.points.length - 1].x,
+      this.points[commands.pline.points.length - 1].y,
       ep.x,
       ep.y
     );
@@ -153,9 +153,9 @@ IO.polyline = (() => {
     return this.points;
   }
 
-  function show(polyline) {
-    for (let i = 0; i < polyline.length - 1; i++) {
-      line(polyline[i].x, polyline[i].y, polyline[i + 1].x, polyline[i + 1].y);
+  function show(pline) {
+    for (let i = 0; i < pline.length - 1; i++) {
+      line(pline[i].x, pline[i].y, pline[i + 1].x, pline[i + 1].y);
     }
   }
   return { draw, addPoints, getPoints, show };
