@@ -1,6 +1,6 @@
 /**
  * @module commands
- * @returns line, circle, rect2p, polyline, spline, bazier
+ * @returns line, circle, rect2p, pline, spline, bazier
  */
 const commands = () => {
   return {};
@@ -26,15 +26,15 @@ commands.line = {
 /**
  * Draw continues joined line.
  */
-commands.polyline = {
-  name: "polyline",
-  layer: layers.polylines,
+commands.pline = {
+  name: "pline",
+  layer: layers.plines,
   stages: 0,
   continuable: false,
   points: [],
-  draw: IO.polyline.draw,
-  addPoints: IO.polyline.addPoints,
-  getPoints: IO.polyline.getPoints,
+  draw: IO.pline.draw,
+  addPoints: IO.pline.addPoints,
+  getPoints: IO.pline.getPoints,
   modifiers: {
     ortho: true,
   },
@@ -86,7 +86,7 @@ commands.spline = {
 };
 
 /**
- * Draw a spline through points
+ * Draw continues quadratic bezier curve
  */
 commands.bezier2p = {
   name: "bezier2p",
