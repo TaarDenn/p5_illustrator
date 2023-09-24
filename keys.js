@@ -24,7 +24,11 @@ function keyReleased() {
     key !== "z" &&
     key !== "Z" &&
     key !== "m" &&
-    key !== "M"
+    key !== "M" &&
+    key !== "u" &&
+    key !== "U" &&
+    key !== "y" &&
+    key !== "Y"
   ) {
     deactiveCommands();
   }
@@ -32,7 +36,7 @@ function keyReleased() {
   if (key === "b" || key === "B") initCommand("bezier2p");
   if (key === "c" || key === "C") initCommand("circle");
   if (key === "l" || key === "L") initCommand("line");
-  if (key === "p" || key === "P") initCommand("polyline");
+  if (key === "p" || key === "P") initCommand("pline");
   if (key === "s" || key === "S") initCommand("spline");
   if (key === "r" || key === "R") initCommand("rect2p");
 
@@ -53,21 +57,50 @@ function keyReleased() {
 
   // U for undo.
   if (key === "u" || key === "U") {
-    if (drawing.length == 1 && drawing[0].length == 0) return;
-    if (drawing[drawing.length - 1].length == 0) {
-      drawing.pop();
+    if (activeCommand) {
+      if (activeCommand.points.length > 1) {
+        console.log(activeCommand.points);
+        activeRedoHistory.push(
+          activeCommand.points[activeCommand.points.length - 1]
+        );
+        activeCommand.points.pop();
+      } else {
+        activeRedoHistory = [];
+        deactiveCommands();
+        return;
+      }
     }
-    drawing[drawing.length - 1].pop();
+    if (!activeCommand && undoHistory.length > 0) {
+      const lastCommand = undoHistory[undoHistory.length - 1];
+      redoHistory.push({
+        name: lastCommand,
+        shape:
+          commands[lastCommand].layer[commands[lastCommand].layer.length - 1],
+      });
+      commands[lastCommand].layer.pop();
+      undoHistory.pop();
+    }
+  }
+
+  // Y for redo
+  if (key === "y" || key === "Y") {
+    if (activeCommand && activeRedoHistory.length > 0) {
+      activeCommand.points.push(
+        activeRedoHistory[activeRedoHistory.length - 1]
+      );
+      activeRedoHistory.pop();
+    }
+
+    if (!activeCommand && redoHistory.length > 0) {
+      const lastCommand = redoHistory[redoHistory.length - 1];
+      commands[lastCommand.name].layer.push(lastCommand.shape);
+      undoHistory.push(lastCommand.name);
+      redoHistory.pop();
+    }
   }
 
   // H to Show/Hide overlayed img.
   if (key === "h" || key === "H") imagePriview = !imagePriview;
-
-  // Q to close the current shape.
-  if (key === "q" || key === "Q") {
-    // drawing[drawing.length - 1].push(drawing[drawing.length - 1][0]);
-    // drawing.push([]);
-  }
 
   // Press "E" to export shapes.
   if (key === "e" || key === "E") {
