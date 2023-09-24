@@ -21,6 +21,11 @@ let imagePriview = false;
 let orthoX = null;
 let orthoY = null;
 
+// History for redo/undo
+const undoHistory = [];
+const redoHistory = [];
+let activeRedoHistory = [];
+
 function setup() {
   createCanvas(400, 400);
   colorMode(HSB, 360, 100, 100, 100);
@@ -52,8 +57,11 @@ function mouseReleased() {
     if (acStageManger[i] == false) {
       acStageManger[i] = true;
       activeCommand.addPoints(getCursur());
+      activeRedoHistory = []
+      // Last stage of command
       if (i === acStageManger.length - 1) {
         activeCommand.layer.push(activeCommand.getPoints());
+        addToHistory();
         acStageManger = [];
         if (activeCommand.continuable) {
           activeCommand.points = [
@@ -69,6 +77,7 @@ function mouseReleased() {
     }
   }
   activeCommand?.addPoints(getCursur());
+  activeRedoHistory = []
 }
 
 function runCommand() {
@@ -95,6 +104,13 @@ function deactiveCommands() {
   activeCommand.points = [];
   acStageManger = [];
   activeCommand = null;
+}
+
+function addToHistory() {
+  if (undoHistory.length == 25) {
+    undoHistory.splice(0, 1);
+  }
+  undoHistory.push(activeCommand.name);
 }
 
 function getCursur() {
@@ -149,9 +165,7 @@ function showDrawing() {
   layers.circles.forEach((c) => IO.circle.show(c));
   layers.rects2p.forEach((r) => IO.rect2p.show(r));
   layers.lines.forEach((l) => IO.line.show(l));
-  layers.polylines.forEach((p) => {
-    IO.polyline.show(p);
-  });
+  layers.plines.forEach((p) => IO.pline.show(p));
   layers.splines.forEach((s) => IO.spline.show(s));
   layers.beziers2p.forEach((b) => IO.bezier2p.show(b));
 }
