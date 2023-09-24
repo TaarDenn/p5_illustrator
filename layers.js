@@ -7,7 +7,7 @@ const layers = () => {
 };
 
 layers.lines = [];
-layers.polylines = [];
+layers.plines = [];
 layers.rects2p = [];
 layers.circles = [];
 layers.splines = [];
