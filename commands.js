@@ -11,13 +11,12 @@ const commands = () => {
  */
 commands.line = {
   name: "line",
-  layer: layers.lines,
   stages: 2,
   continuable: true,
   points: [],
   draw: IO.line.draw,
   addPoints: IO.line.addPoints,
-  getPoints: IO.line.getPoints,
+  getShape: IO.line.getShape,
   modifiers: {
     ortho: true,
   },
@@ -28,13 +27,12 @@ commands.line = {
  */
 commands.pline = {
   name: "pline",
-  layer: layers.plines,
   stages: 0,
   continuable: false,
   points: [],
   draw: IO.pline.draw,
   addPoints: IO.pline.addPoints,
-  getPoints: IO.pline.getPoints,
+  getShape: IO.pline.getShape,
   modifiers: {
     ortho: true,
   },
@@ -45,13 +43,12 @@ commands.pline = {
  */
 commands.rect2p = {
   name: "rect2p",
-  layer: layers.rects2p,
   stages: 2,
   continuable: false,
   points: [],
   draw: IO.rect2p.draw,
   addPoints: IO.rect2p.addPoints,
-  getPoints: IO.rect2p.getPoints,
+  getShape: IO.rect2p.getShape,
   modifiers: {},
 };
 
@@ -60,14 +57,13 @@ commands.rect2p = {
  */
 commands.circle = {
   name: "circle",
-  layer: layers.circles,
   stages: 2,
   continuable: false,
   points: [],
   draw: IO.circle.draw,
   addPoints: IO.circle.addPoints,
-  getPoints: IO.circle.getPoints,
-  modifiers: {},
+  getShape: IO.circle.getShape,
+  modifiers: { ortho: true },
 };
 
 /**
@@ -75,13 +71,12 @@ commands.circle = {
  */
 commands.spline = {
   name: "spline",
-  layer: layers.splines,
   stages: 0,
   continuable: false,
   points: [],
   draw: IO.spline.draw,
   addPoints: IO.spline.addPoints,
-  getPoints: IO.spline.getPoints,
+  getShape: IO.spline.getShape,
   modifiers: {},
 };
 
@@ -90,12 +85,20 @@ commands.spline = {
  */
 commands.bezier2p = {
   name: "bezier2p",
-  layer: layers.beziers2p,
-  stages: 0,
-  continuable: false,
+  stages: 3,
+  continuable: true,
   points: [],
   draw: IO.bezier2p.draw,
   addPoints: IO.bezier2p.addPoints,
-  getPoints: IO.bezier2p.getPoints,
+  getShape: IO.bezier2p.getShape,
   modifiers: {},
+};
+
+commands.reset = function () {
+  this.line.points = [];
+  this.pline.points = [];
+  this.spline.points = [];
+  this.bezier2p.points = [];
+  this.circle.points = [];
+  this.rect2p.points = [];
 };

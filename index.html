@@ -6,11 +6,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
-    <script src="keys.js"></script>
-    <script src="shapesIO.js"></script>
-    <script src="layers.js"></script>
+    <script src="quicksettings.js"></script>
+    <script src="io.js"></script>
+    <script src="gui.js"></script>
     <script src="commands.js"></script>
-
+    <script src="utils.js"></script>
 
     <link rel="stylesheet" type="text/css" href="style.css" />
     <meta charset="utf-8" />
@@ -18,32 +18,5 @@
 
   <body>
     <script src="sketch.js"></script>
-    <div id="info">
-      <h2>Simple Tool to draw end export polyline end-points.</h2>
-      <h3>How To use:</h3>
-      <ul>
-        <li>
-          Start Clicking to draw polyline.<br />(There is no need to hold mouse
-          button, Just keep clicking!)
-        </li>
-        <li>
-          Hit "ENTER" or "RETURN" to stop drawing and start a new PolyLine.
-        </li>
-      </ul>
-      <h3>Commands:</h3>
-      <ul>
-        <li>
-          Hold <b>S</b> to activate <b>Snap Mode</b> (Snap mode:active let you
-          to lock the pointer on the exisitng nearest points, like a magnet!)
-        </li>
-        <li>Press <b>U</b> to undo. (no Redo, sorry!)</li>
-        <li>Press <b>C</b> to close the current shape.</li>
-        <li>Press <b>I</b> to show/hide overlayed image (if uploaded any).</li>
-        <li>
-          Press <b>E</b> to export points as a nested Array.<br />
-          Like: [ [ [x1,y1], [x2,y2] ], [ [x3,y3], [x4,y4], [x5,y5] ], ...]
-        </li>
-      </ul>
-    </div>
   </body>
 </html>
