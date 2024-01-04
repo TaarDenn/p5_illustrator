@@ -5,19 +5,11 @@ body {
   font-family: "Barlow", sans-serif;
   display: flex;
   flex-direction: row nowrap;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 canvas {
   display: block;
 }
- #info {
-  margin-left: 20px;
-  margin-right: 20px;
-  border: 1px solid black; 
-  /* width: 500px; */
-  border-radius: 20px;
-  padding: 30px;
- }
-/* input[type="file"] {
-
-} */
